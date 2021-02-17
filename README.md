@@ -25,6 +25,11 @@ yarn add @aotoo/react-cell
 4. 完整表单
 5. 注册新表单
 
+更多说明
+------------------
+
+<http://www.agzgz.com>
+
 ### 单表单
 
 cell默认只支持文本表单，如type=text, number, telphone等，更多的表单需要通过注册的方式自定义，我们也提供了一些经典的表单组件，需要额外加载进来
