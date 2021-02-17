@@ -7,10 +7,10 @@ import { inputParser } from '../dataparser'
 import { createAttachment, useMyAttachment } from "../attachment";
 import { createAttrState } from "../attributes";
 import { supplementEvents } from "../events";
-import { useState } from '../util'
+import { useState, createStore } from '../util'
 
 export function InputBody(props){
-  let parent = props.parent || props.store || {}
+  let parent = props.parent || props.store || createStore()
   let InputEntity = props.entity  // 注册组件
   
 
@@ -49,6 +49,10 @@ export function InputBody(props){
   let allFunkeys = Object.assign({}, funKeys, attributesFunKeys)
   let mycontext = Object.assign({}, context, inputContext, attributesContext)
 
+  mycontext.asset = {
+    attributes: attr,
+    properties: inputConfig.properties
+  }
   // attr方法仿jquery的attr方法
   mycontext.attr = function(ky, val, cb){
     if (ky) {

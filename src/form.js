@@ -51,7 +51,17 @@ export function FormBlock(props){
   }, [props.data])
   
   let [inputElements, managerInputElements] = useState(tmpConfig.properties.input)
+  let { myrequired, myItemClass, myItemStyle, mytitle, mydesc, myerror, myshow, errorType, context, funKeys } = useMyAttachment(tmpConfig, 'line')
+  let allFunkeys = Object.assign({}, funKeys)
+
   let formLineContext = {
+    attr(ky, val, cb){
+      if (ky) {
+        let fn = typeof val !== 'undefined' ? allFunkeys[ky][0] : allFunkeys[ky][1]
+        let fun = context[fn]
+        return fn && fun && fun(val, cb)
+      }
+    },
     reset(param, cb){
       if (lib.isFunction(param)){
         cb = param;
@@ -122,8 +132,9 @@ export function FormBlock(props){
           param = param.map(item=> this.push(item, null, true) )
           if (unshift) {
             inputElements = param.concat(inputElements)
+          } else {
+            inputElements = inputElements.concat(param)
           }
-          inputElements = inputElements.concat(param)
           managerInputElements([...inputElements], cb)
         }
       }
@@ -151,7 +162,7 @@ export function FormBlock(props){
     },
     findIndex(query){
       let index = -1
-      if (query) {
+      if (query || (lib.isNumber(query) && query > -1)) {
         if (lib.isNumber(query) && query > -1) {
           index = query
         } else if(lib.isFunction(query)) {
@@ -166,7 +177,6 @@ export function FormBlock(props){
       return index
     },
   }
-  let { myrequired, myItemClass, myItemStyle, mytitle, mydesc, myerror, myshow, errorType, context } = useMyAttachment(tmpConfig, 'line')
 
   let mycontext = Object.assign({}, context, formLineContext)
   parent.ctx.group[groupId] = mycontext
@@ -226,22 +236,32 @@ export function FormGroup(props) {
         setData([...$data], cb)
       }
     },
-    unshift(cb){
+    unshift(param, cb){
       if (lib.isPlainObject(param)) {
         $data.unshift(param)
         setData([...$data], cb)
       }
     },
-    concat(param, cb){
+    concat(param, cb, unshift){
       if (param) {
         if (lib.isPlainObject(param)) {
           param = [param]
         }
         if (lib.isArray(param)) {
-          $data = $data.concat(param)
+          if (unshift) {
+            $data = param.concat($data)
+          } else {
+            $data = $data.concat(param)
+          }
           setData([...$data], cb)
         }
       }
+    },
+    append(param, cb){
+      this.concat(param, cb)
+    },
+    prepend(param, cb){
+      this.concat(param, cb, true)
     },
     pop(cb){
       let index = $data.length - 1
@@ -285,7 +305,7 @@ export function FormGroup(props) {
     },
     findIndex(query){
       let index = -1
-      if (query) {
+      if (query || (lib.isNumber(query) && query > -1)) {
         if (lib.isNumber(query) && query > -1) {
           index = query
         } else if(lib.isFunction(query)) {
@@ -293,6 +313,8 @@ export function FormGroup(props) {
             let res = query(item)
             if (res) index = ii
           })
+        } else if(lib.isPlainObject(query)) {
+          index = $data.findIndex(item=> item.gid === query.gid )
         }
       }
       return index

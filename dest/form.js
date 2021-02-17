@@ -120,7 +120,27 @@ function FormBlock(props) {
       inputElements = _useState4[0],
       managerInputElements = _useState4[1];
 
+  var _useMyAttachment = (0, _attachment.useMyAttachment)(tmpConfig, 'line'),
+      myrequired = _useMyAttachment.myrequired,
+      myItemClass = _useMyAttachment.myItemClass,
+      myItemStyle = _useMyAttachment.myItemStyle,
+      mytitle = _useMyAttachment.mytitle,
+      mydesc = _useMyAttachment.mydesc,
+      myerror = _useMyAttachment.myerror,
+      myshow = _useMyAttachment.myshow,
+      errorType = _useMyAttachment.errorType,
+      context = _useMyAttachment.context,
+      funKeys = _useMyAttachment.funKeys;
+
+  var allFunkeys = Object.assign({}, funKeys);
   var formLineContext = {
+    attr: function attr(ky, val, cb) {
+      if (ky) {
+        var fn = typeof val !== 'undefined' ? allFunkeys[ky][0] : allFunkeys[ky][1];
+        var fun = context[fn];
+        return fn && fun && fun(val, cb);
+      }
+    },
     reset: function reset(param, cb) {
       var _this = this;
 
@@ -205,9 +225,10 @@ function FormBlock(props) {
 
           if (unshift) {
             inputElements = param.concat(inputElements);
+          } else {
+            inputElements = inputElements.concat(param);
           }
 
-          inputElements = inputElements.concat(param);
           managerInputElements(_toConsumableArray(inputElements), cb);
         }
       }
@@ -238,7 +259,7 @@ function FormBlock(props) {
     findIndex: function findIndex(query) {
       var index = -1;
 
-      if (query) {
+      if (query || _util.lib.isNumber(query) && query > -1) {
         if (_util.lib.isNumber(query) && query > -1) {
           index = query;
         } else if (_util.lib.isFunction(query)) {
@@ -256,18 +277,6 @@ function FormBlock(props) {
       return index;
     }
   };
-
-  var _useMyAttachment = (0, _attachment.useMyAttachment)(tmpConfig, 'line'),
-      myrequired = _useMyAttachment.myrequired,
-      myItemClass = _useMyAttachment.myItemClass,
-      myItemStyle = _useMyAttachment.myItemStyle,
-      mytitle = _useMyAttachment.mytitle,
-      mydesc = _useMyAttachment.mydesc,
-      myerror = _useMyAttachment.myerror,
-      myshow = _useMyAttachment.myshow,
-      errorType = _useMyAttachment.errorType,
-      context = _useMyAttachment.context;
-
   var mycontext = Object.assign({}, context, formLineContext);
   parent.ctx.group[groupId] = mycontext; // console.log(inputElements);
   // 渲染结构
@@ -331,23 +340,34 @@ function FormGroup(props) {
         setData(_toConsumableArray($data), cb);
       }
     },
-    unshift: function unshift(cb) {
+    unshift: function unshift(param, cb) {
       if (_util.lib.isPlainObject(param)) {
         $data.unshift(param);
         setData(_toConsumableArray($data), cb);
       }
     },
-    concat: function concat(param, cb) {
+    concat: function concat(param, cb, unshift) {
       if (param) {
         if (_util.lib.isPlainObject(param)) {
           param = [param];
         }
 
         if (_util.lib.isArray(param)) {
-          $data = $data.concat(param);
+          if (unshift) {
+            $data = param.concat($data);
+          } else {
+            $data = $data.concat(param);
+          }
+
           setData(_toConsumableArray($data), cb);
         }
       }
+    },
+    append: function append(param, cb) {
+      this.concat(param, cb);
+    },
+    prepend: function prepend(param, cb) {
+      this.concat(param, cb, true);
     },
     pop: function pop(cb) {
       var index = $data.length - 1;
@@ -393,13 +413,17 @@ function FormGroup(props) {
     findIndex: function findIndex(query) {
       var index = -1;
 
-      if (query) {
+      if (query || _util.lib.isNumber(query) && query > -1) {
         if (_util.lib.isNumber(query) && query > -1) {
           index = query;
         } else if (_util.lib.isFunction(query)) {
           $data.find(function (item, ii) {
             var res = query(item);
             if (res) index = ii;
+          });
+        } else if (_util.lib.isPlainObject(query)) {
+          index = $data.findIndex(function (item) {
+            return item.gid === query.gid;
           });
         }
       }

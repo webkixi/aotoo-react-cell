@@ -19,7 +19,7 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function emitUnionResponse(response, evtkey, ctx, parent) {
+function emitUnionResponse(response, evtkey, ctx, parent, evt) {
   response.forEach(function (linkitem) {
     var _linkitem = _slicedToArray(linkitem, 3),
         ekey = _linkitem[0],
@@ -70,14 +70,17 @@ function supplementEvents(inputConfig, mycontext, parent) {
   }
 
   if (_util.lib.isEmpty(events)) {
+    events = {
+      onChange: innerOnChange
+    };
+
     if (unionResponse.length) {
-      unionResponse = unionResponse.map(function (un) {
-        un[0] = null;
-        return un;
+      // unionResponse = unionResponse.map(un=>{ un[0] = null; return un })
+      unionResponse.forEach(function (un) {
+        if (un[0] && un[0] !== 'onChange') {
+          events[un[0]] = true;
+        }
       });
-      events = {
-        onChange: innerOnChange
-      };
     }
   } // 有value时必须绑onChange事件
 
@@ -90,9 +93,8 @@ function supplementEvents(inputConfig, mycontext, parent) {
     }
 
     if (!hasOnChangeEvent) {
-      events = {
-        onChange: innerOnChange
-      };
+      // events = { onChange: innerOnChange}
+      events.onChange = innerOnChange;
     }
   }
 
@@ -104,8 +106,8 @@ function supplementEvents(inputConfig, mycontext, parent) {
             var oldfn = fn;
             var newfn = e;
             return [oldfn, function (evt) {
-              newfn(evt, param, mycontext);
-              emitUnionResponse(unionResponse, evtkey, mycontext, parent);
+              newfn.call(mycontext, evt, param, mycontext);
+              emitUnionResponse(unionResponse, evtkey, mycontext, parent, e);
             }];
           }
 
@@ -113,16 +115,20 @@ function supplementEvents(inputConfig, mycontext, parent) {
 
           if (_util.lib.isString(fn)) {
             if (_util.lib.isFunction(parent[fn])) {
-              parent[fn](e, param, mycontext);
+              if (parent[fn].call(mycontext, e, param, mycontext)) {
+                mycontext.setValue(e.target.value);
+              }
             }
           }
 
           if (_util.lib.isFunction(fn)) {
-            fn(e, param, mycontext);
+            if (fn.call(mycontext, e, param, mycontext)) {
+              mycontext.setValue(e.target.value);
+            }
           } // 设计联动方法的参数
 
 
-          emitUnionResponse(unionResponse, evtkey, mycontext, parent);
+          emitUnionResponse(unionResponse, evtkey, mycontext, parent, e);
         };
       };
 
@@ -139,6 +145,12 @@ function supplementEvents(inputConfig, mycontext, parent) {
       }
 
       if (_util.lib.isFunction(fun)) {
+        attributes[evtkey] = funEntity(fun, null
+        /* ,param, inst */
+        );
+      }
+
+      if (fun === true) {
         attributes[evtkey] = funEntity(fun, null
         /* ,param, inst */
         );

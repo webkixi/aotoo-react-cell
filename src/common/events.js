@@ -4,7 +4,7 @@
 
 import { useState, lib } from "./util";
 
-function emitUnionResponse(response, evtkey, ctx, parent) {
+function emitUnionResponse(response, evtkey, ctx, parent, evt) {
   response.forEach(linkitem=>{
     let [ekey, linkfun, srcId] = linkitem
     let sourceBehaviorContext = parent.ctx.elements[srcId]
@@ -43,9 +43,14 @@ export function supplementEvents(inputConfig, mycontext, parent){
   }
 
   if (lib.isEmpty(events)) {
+    events = { onChange: innerOnChange}
     if (unionResponse.length) {
-      unionResponse = unionResponse.map(un=>{ un[0] = null; return un })
-      events = { onChange: innerOnChange}
+      // unionResponse = unionResponse.map(un=>{ un[0] = null; return un })
+      unionResponse.forEach(un=>{
+        if (un[0] && un[0]!=='onChange')  {
+          events[un[0]] = true
+        }
+      })
     }
   }
 
@@ -56,7 +61,8 @@ export function supplementEvents(inputConfig, mycontext, parent){
       hasOnChangeEvent = false
     }
     if (!hasOnChangeEvent) { 
-      events = { onChange: innerOnChange}
+      // events = { onChange: innerOnChange}
+      events.onChange = innerOnChange
     }
   }
 
@@ -72,22 +78,26 @@ export function supplementEvents(inputConfig, mycontext, parent){
             return [
               oldfn,
               function(evt){
-                newfn(evt, param, mycontext)
-                emitUnionResponse(unionResponse, evtkey, mycontext, parent)
+                newfn.call(mycontext, evt, param, mycontext)
+                emitUnionResponse(unionResponse, evtkey, mycontext, parent, e)
               }
             ]
           }
           e.persist()
           if (lib.isString(fn)) {
             if (lib.isFunction(parent[fn])){
-              parent[fn](e, param, mycontext)
+              if (parent[fn].call(mycontext, e, param, mycontext)) {
+                mycontext.setValue(e.target.value)
+              }
             }
           }
           if (lib.isFunction(fn)) {
-            fn(e, param, mycontext)
+            if (fn.call(mycontext, e, param, mycontext)) {
+              mycontext.setValue(e.target.value)
+            }
           }
           // 设计联动方法的参数
-          emitUnionResponse(unionResponse, evtkey, mycontext, parent)
+          emitUnionResponse(unionResponse, evtkey, mycontext, parent, e)
         }
       }
       if (lib.isString(fun)) {
@@ -98,6 +108,9 @@ export function supplementEvents(inputConfig, mycontext, parent){
         attributes[evtkey] = funEntity(funName, query /* ,param, inst */)
       }
       if (lib.isFunction(fun)) {
+        attributes[evtkey] = funEntity(fun, null /* ,param, inst */)
+      }
+      if (fun === true) {
         attributes[evtkey] = funEntity(fun, null /* ,param, inst */)
       }
     })

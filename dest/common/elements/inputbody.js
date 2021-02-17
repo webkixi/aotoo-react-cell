@@ -28,7 +28,7 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function InputBody(props) {
-  var parent = props.parent || props.store || {};
+  var parent = props.parent || props.store || (0, _util.createStore)();
   var InputEntity = props.entity; // 注册组件
 
   var _useState = (0, _util.useState)(function () {
@@ -77,7 +77,11 @@ function InputBody(props) {
 
   inputConfig.attributes = attr;
   var allFunkeys = Object.assign({}, funKeys, attributesFunKeys);
-  var mycontext = Object.assign({}, context, inputContext, attributesContext); // attr方法仿jquery的attr方法
+  var mycontext = Object.assign({}, context, inputContext, attributesContext);
+  mycontext.asset = {
+    attributes: attr,
+    properties: inputConfig.properties
+  }; // attr方法仿jquery的attr方法
 
   mycontext.attr = function (ky, val, cb) {
     if (ky) {

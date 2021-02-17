@@ -45,14 +45,14 @@ export function useMyAttachment(itemConfig, prefix='item') {
       let n = ['set '+ky, 'get '+ky, ky]
       n = n.map(k=>lib.camelCase(k))
       funKeys[ky] = n
-      v = properties
+      // v = properties
   
       // setValue setClass setReadonly
       inputPropBehavior[n[0]] = function(param, cb){
         v[ky] = ky === 'show' ? (param === undefined ? true : param) : param
         if (timmer) clearTimeout(timmer)
+        // v = properties
         timmer = setTimeout(() => {
-          v = properties
           setV({...v}, cb)
           timmer = null
         }, 17);
@@ -125,6 +125,8 @@ export function useMyAttachment(itemConfig, prefix='item') {
   }
 
   let myshow = inputPropBehavior.getShow()
+  let myItemClass = inputPropBehavior.getItemClass()
+  let myItemStyle = inputPropBehavior.getItemStyle()
   let mytitle = createAttachment(inputPropBehavior.getTitle(), dftcls[0], attributes)
   let mydesc = createAttachment(inputPropBehavior.getDesc(), dftcls[1], attributes)
   let myerror = createAttachment(inputPropBehavior.getError(), dftcls[2] + ' ' + errorType , attributes)
@@ -133,8 +135,10 @@ export function useMyAttachment(itemConfig, prefix='item') {
   return {
     funKeys,
     context, 
-    myItemClass: properties.itemClass,
-    myItemStyle: properties.itemStyle,
+    // myItemClass: properties.itemClass,
+    // myItemStyle: properties.itemStyle,
+    myItemClass: myItemClass,
+    myItemStyle: myItemStyle,
     
     myrequired,
     mytitle,

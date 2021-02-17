@@ -1,386 +1,239 @@
-# aotoo
+# aotoo-react-cell
 
-aotoo是一个react的封装库，将react组件js实例化  
+可以把cell当做一款灵活的容器组件(react)，cell提供标准化的结构，api方法，支持组件注册(注册组件产出标准结构)，支持组件分拆，重组等
 
-在一些小型的项目，不需要引入redux等状态库，使用ao2封装原生react组件(自定义)生成JS对象，通过定义内部的属性和方法，来更新状态
+cell最初是作为表单来开发的，在开发的过程中我们发现cell可以更加抽象，并使用其开发非表单组件，这些在其他的文档中会详细介绍。
 
-[GITHUB源码](https://www.github.com/webkixi/aotoo)
+[GITHUB源码](https://www.github.com/webkixi/aotoo-react-cell)
 
-## INSTALL
+INSTALL
+------------------
 
 ```bash
+# cell 依赖 react react-dom和 aotoo库，请先安装
+yarn add react react-dom
 yarn add @aotoo/aotoo
-#
-npm install @aotoo/aotoo
+yarn add @aotoo/react-cell
 ```
 
-## USAGE 1 计数器
+使用说明
+------------------
 
-封装react原生组件，并曝露api方法以方便外部修改组件状态  
-下例是一个简单的计数器组件，为react原生组件添加了属性和api方法，其中api暴露给外部使用，如下例中的button按钮通过暴露的increase方法设置组件计数
+1. 单表单
+2. 复合表单
+3. 组表单
+4. 完整表单
+5. 注册新表单
 
-Demo: <https://codesandbox.io/s/aotoo6jishuqi-dv1uf>
+### 单表单
+
+cell默认只支持文本表单，如type=text, number, telphone等，更多的表单需要通过注册的方式自定义，我们也提供了一些经典的表单组件，需要额外加载进来
 
 ```js
-import createComponent from '@aotoo/aotoo'
+import cell from '@aotoo/react-cell'
+const data = {title: '哈哈', id: 'haha', value: 'ddddd', type: 'text'}
 
-class Count extends React.Component {
-  render() {
-    return (
-      <div className="container" onClick={this.env.increase}>
-        {this.state.count || 0}
-      </div>
-    );
-  }
+function App(){
+  let [$data, setData] = React.useState(data)
+  return <cell.Text data={$data}/>
 }
 
-const countInstance = createComponent(Count, {
-  data: {  // 将转化成react组件的state
-    count: 0,
-  },
-  increase(e) {
-    let count = this.getData().count;
-    count++;
-    this.setData({ count });
-  }
-});
-
-function Container() {
-  return (
-    <>
-      <countInstance.UI />
-      <button onClick={countInstance.increase}>计数器</button>
-    </>
-  );
-}
-
-ReactDOM.render(<Container />, document.getElementById('root'))
+ReactDOM.render(<App />, document.getElementById('root'))
 ```
 
-## USAGE 2 配置化计数器组件
+### 复合表单  
 
-封装配置，并生成js对象及曝露该对象的api方法  
-参考微信小程序组件的设计，使用配置化生成react组件，并对外曝露相关api方法  
-
-Demo: <https://codesandbox.io/s/aotoo6jishuqi-forked-vh8n2>
+有多种类型的元表单构成
 
 ```js
-import createComponent from '@aotoo/aotoo'
-
-const countTemplate = function (state, props) {
-  return <div className={"container"}>{state.count}</div>;
-};
-
-const countConfig = {
-  data: {
-    count: 0
-  },
-  increase() {
-    let count = this.getData().count;
-    count++;
-    this.setData({ count });
-  }
-};
-
-let count = createComponent(countConfig, countTemplate);
-
-function Container() {
-  return (
-    <>
-      <count.UI />
-      <button onClick={count.increase}>计数器</button>
-    </>
-  );
-}
-
-ReactDOM.render(<Container/>, document.getElementById('root'))
-```
-
-## WRAP
-
-封装JSX输出真实dom，有些场景调用第三方库需要作用于真实dom  
-
-```js
-import createComponent from '@aotoo/aotoo'
-
-let jsx = createComponent((
-  <div>
-    <span>文本内容</span>
-  <div>
-), function(dom){
-  $(dom).on('click', clickHandle)
-  return function(){
-    $dom.off('click', clickHandle)
-  }
-})
-
-ReactDOM.render(jsx, document.getElementById('root'))
-```
-
-## 生命周期
-
-组件的生命周期，指的是组件自身的一些函数，这些函数在特殊的时间点或遇到一些特殊的框架事件时被自动触发。其中，最重要的生命周期是 `created` `attached` `detached` ，包含一个组件实例生命流程的最主要时间点。生命周期的设计参考微信小程序  
-
-```js
-import createComponent, {$$} from '@aotoo/aotoo';
-createComponent({
-  created: function(){
-    // 在组件实例刚刚被创建时执行
-  },
-  attached: function() {
-    // 在组件实例进入页面节点树时执行
-  },
-  ready: function(){
-    // 在组件在视图层布局完成后执行
-  },
-  didUpdate: function(){
-    // 在组件挂载后，每一次更新后会调用
-  },
-  detached: function() {
-    // 在组件实例被从页面节点树移除时执行
-  },
-},
-template
-)
-```
-
-## 通用属性
-
-| 属性      |    类型 | 说明  |
-| :-------- | :--------: | :-- |
-| $$id  | String |  类似于$('#id')的id  |
-| created      |   Function | 生命周期，同小程序组件 |
-| attached      |   Function | 生命周期，同小程序组件 |
-| ready      |   Function | 生命周期，同小程序组件 |
-| didUpdate      |   Function | 每次更新后触发 |
-
-## 通用API
-
-| 方法      |    类型 | 说明  |
-| :-------- | :--------: | :-- |
-| parent      |   (p) | 查找父级 |
-| getData      |   () | 获取元素数据 |
-| show      |   () | 显示该组件 |
-| hide      |   () | 隐藏该组件 |
-| destory      |   () | 销毁该组件 |
-| render      |   (p) | 渲染组件，与直接写jsx一致 |
-| attr |  (p1, p2) |  设置/获取data-*属性 |
-
-## 内置组件
-
-### item  
-
-引入`@aotoo/aotoo`后，会生成全局变量`ui_item`和全局方法组件`UI_item`, item组件将会生成一个`div`的html结构  
-
-#### ui_item
-
-配置化生成item组件
-
-```js
-import '@aotoo/aotoo'
-
-const itemConfig = {
+import cell, {CellBlock} from '@aotoo/react-cell'
+const data = {
   title: '标题',
-  onClick: 'changeTitle?title=新的标题',
-  changeTitle(e, param, inst){
-    inst.update({
-   title: param.title
- })
-  }
+  input: [
+    {title: '哈哈', id: 'haha', value: 'ddddd', type: 'text'},
+    {title: '呵呵', id: 'hehe', value: 'eeeee', type: 'number'},
+  ]
 }
 
-const item = ui_item(itemConfig)
+function App(){
+  let [$data, setData] = React.useState(data)
+  return <CellBlock data={$data} />
+}
 
-ReactDOM.render(<item.UI />, document.getElementById('root'))
+ReactDOM.render(<App />, document.getElementById('root'))
 ```
 
-#### UI_item  
+### 组表单
 
-通过React方法组件  
-
-```js
-import '@aotoo/aotoo'
-
-function changeTitle(e){
-  this.update({
-    title: '新的标题'
-  })
-}
-
-const JSX = <UI_item title='标题' onClick={changeTitle}/>
-```  
-
-#### item属性
-
-| 属性      |    类型 | 说明  |
-| :-------- | :--------: | :-- |
-| $$id  | String |  类似于$('#id')的id  |
-| title     |   String/Object/Array |  item结构  |
-| img     |   String/Object/Array |  item结构  |
-| attr |  Object |  data-*属性  |
-| body     |   Array |  item结构，子集均为item  |
-| footer      |    Array | item结构  |
-| dot      |    Array | item结构  |
-| itemClass      |   String | 自定义样式 |
-| itemStyle      |   String | 自定义样式 |
-| methods      |   Object | 自定义方法 |
-| onXXXX      |   String/Function | all events |
-| created      |   Function | 生命周期，同小程序组件 |
-| attached      |   Function | 生命周期，同小程序组件 |
-| ready      |   Function | 生命周期，同小程序组件 |
-
-#### item API 方法
-
-| 方法      |    参数 | 说明  |
-| :-------- | :--------: | :-- |
-| reset  | (p) |  恢复初始数据  |
-| update     | (p, callback) |  更新数据  |
-| setData     | (p, callback)  |  与update相同  |
-| attr |  (p1, p2) |  设置/获取data-*属性 |
-| addClass     | (p, callback)|  新增样式类  |
-| removeClass      | (p, callback) | 移除样式类名  |
-| hasClass      |  (p) | 检测样式类名 |
-| css      | (p) | 自定义样式 |
-| toggleClass      | (p, callback) | 切换样式类名 |
-| siblings      | (p) | 查找兄弟元素 |
-| parent      |   (p) | 查找父级 |
-| getData      |   () | 获取元素数据 |
-| show      |   () | 显示该组件 |
-| hide      |   () | 隐藏该组件 |
-| destory      |   () | 销毁该组件 |
-| render      |   (p) | 渲染组件，与直接写jsx一致 |
-
-### list  
-
-引入`@aotoo/aotoo`后，会生成全局变量`ui_list`和全局方法组件`UI_list`, list组件将会生成一组`div`的html结构(基于`item`组件)
-
-#### ui_list
-
-配置生成list组件
+由多个复合表单构成
 
 ```js
-const listConfig = {
-  data: [
-    {title: 'JACK', onClick: 'onItemClick?user=jack'},
-    {title: 'ROSE', onClick: 'onItemClick?user=rose'}
-  ],
-  listClass: 'list-class',
-  onItemClick(e, param, inst){
-    if (param.user === 'jack') {
-      this.update({
-        'data[0].title': 'JACK LOVE ROSE'
-      })
-    }
-  }
-}
-
-const list = ui_list(listConfig)  
-
-ReactDOM.render(<list.UI />, document.getElementById('root'))
-  
-```
-
-#### UI_list  
-
-通过React方法组件
-
-```js
-import {$$} '@aotoo/aotoo'
-
-function itemClick(e, param, inst){
-  if (param.user === 'jack') {
-    this.update({
-      'data[0].title': 'JAKE LOVE ROSE'
-    })
-  }
-}
-
-const listData = [
-  {title: 'JACK', onClick: 'onItemClick?user=jack'},
-  {title: 'ROSE'}
+import cell, {CellBlock, CellGroup} from '@aotoo/react-cell'
+const data = [
+  {
+    title: '标题1',
+    input: [
+      {title: '哈哈', id: 'haha', value: 'ddddd', type: 'text'},
+      {title: '呵呵', id: 'hehe', value: 'eeeee', type: 'number'},
+    ]
+  },
+  {
+    title: '标题2',
+    input: [
+      {title: '哈哈', id: 'uid-1', value: 'ddddd', type: 'text'},
+      {title: '呵呵', id: 'uid-2', value: 'eeeee', type: 'number'},
+    ]
+  },
 ]
 
-const JSX = <UI_list
-  $$id='mylist'
-  data={listData}
-  onItemClick={itemClick}
-/>
-
-setTimeout(() => {
-  $$('#mylist').update({
-    'data[1].title': 'ROSE LOVE JACK TOO'
-  })
-}, 4000);
-
-ReactDOM.render(JSX, document.getElementById('root'))
-```
-
-#### list配置参数
-
-| 属性      |    类型 | 说明  |
-| :-------- | :--------: | :-- |
-| $$id  | String |  类似于$('#id')的id  |
-| data     |   Array |  list子集合  |
-| header     |   JSX |  列表头部  |
-| footer     |   JSX |  列表底部  |
-| listClass     |   String |  列表样式类  |
-| listStyle     |   String |  列表内联样式  |
-| itemClass     |   String |  批量设置子项样式类  |
-| itemMethod     |   Object |  批量设置子项事件方法  |
-| methods     |   Object |  设置实例方法  |
-| mode     |   String |  列表类型  |
-
-#### list API 方法
-
-| 方法      |    参数 | 说明  |
-| :-------- | :--------: | :-- |
-| reset  | (p) |  恢复初始数据  |
-| update     | (p, callback) |  更新数据  |
-| setData     | (p, callback)  |  与update相同  |
-| insert   | (query, pay)  |  插入数据  |
-| append   | (pay)  |  追加数据  |
-| prepend   | (pay)  |  前置数据  |
-| remove   | (query)  |  删除数据  |
-| attr |  (p1, p2) |  设置/获取data-*属性 |
-| addClass     | (p, callback)|  新增样式类  |
-| removeClass      | (p, callback) | 移除样式类名  |
-| hasClass      |  (p) | 检测样式类名 |
-| css      | (p) | 自定义样式 |
-| toggleClass      | (p, callback) | 切换样式类名 |
-| parent      |   (p) | 查找父级 |
-| getData      |   () | 获取元素数据 |
-| show      |   () | 显示该组件 |
-| hide      |   () | 隐藏该组件 |
-| destory      |   () | 销毁该组件 |
-| render      |   (p) | 渲染组件，与直接写jsx一致 |
-
-### tree
-
-tree组件是list组件的超集，通过扁平数据输出层次性的HTML结构，可支持多层次数据
-
-```js
-const listConfig = {
-  data: [
-    {title: '广东省', idf: 'gd'},
-    {title: '广州市', parent: 'gd', idf: 'gz'},
-      {title: '天河区', parent: 'gd', parent: 'gz'},
-      {title: '白云区', parent: 'gd', parent: 'gz'},
-      {title: '越秀区', parent: 'gd', parent: 'gz'},
-    {title: '深圳市', parent: 'gd'},
-    {title: '东莞市', parent: 'gd'},
-
- {title: '湖南省', idf: 'hn'},
- {title: '长沙市', parent: 'hn'},
- {title: '衡阳市', parent: 'hn'},
-  ],
-  mode: 'tree'
+function App(){
+  let [$data, setData] = React.useState(data)
+  return <CellGroup data={$data} />
 }
 
-const tree = ui_list(listConfig)  
-
-ReactDOM.render(<tree.UI />, document.getElementById('root'))
+ReactDOM.render(<App />, document.getElementById('root'))
 ```
 
-> 空格不是必须的，为展现数据层次  
+### 完整表单
 
-关注我们，后续完善文档
+由多个组表单构成
+
+```js
+import cell from '@aotoo/react-cell'
+const config = {
+  formClass: 'new-class-name',
+  data: [
+    {
+      title: '标题1',
+      input: [
+        {title: '哈哈', id: 'haha', value: 'ddddd', type: 'text'},
+        {title: '呵呵', id: 'hehe', value: 'eeeee', type: 'number'},
+      ]
+    },
+    {
+      title: '标题2',
+      input: [
+        {title: '哈哈', id: 'uid-1', value: 'ddddd', type: 'text'},
+        {title: '呵呵', id: 'uid-2', value: 'eeeee', type: 'number'},
+      ]
+    },
+  ]
+}
+
+function App(){
+  let [$data, setData] = React.useState(data)
+  let form = cell(config)
+  return <form.UI data={$data} />
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+
+### 新增自定义表单
+
+用户自定义表单
+
+```js
+import cell, {regiter, CellBlock, CellGroup} from '@aotoo/react-cell'
+
+const Test = function(props){
+  return (
+    <div className="test-component">
+      {props.value}
+    </div>
+  )
+}
+
+register('Test', ['test'], Test)  // 注册一个新表单
+```
+
+#### 新注册表单的单表单用法  
+
+```js
+// 使用新注册的单表单  
+
+function App(){
+  let value = '测试表单数据'
+  let component = <cell.Test value={value} />
+  return component
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+
+#### 新注册表单的复合表单用法  
+
+```js
+function App(){
+  // 在复合表单中使用  
+  let config = { 
+    title: '复合表单的标题',
+    input: [
+      {type: 'test', value: '测试数据'}
+    ]
+  }
+
+  let component = (
+    <CellBlock data={config} />
+  )
+
+  return component
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+
+#### 新注册表单的组表单用法  
+
+```js
+function App(){
+  // 在复合表单中使用  
+  let config = [
+    { 
+      title: '复合表单的标题',
+      input: [
+        {type: 'test', value: '自定义表单'}
+      ]
+    },
+    { 
+      title: '复合表单的标题',
+      input: [
+        {type: 'text', value: 'text表单'}
+      ]
+    }
+  ]
+
+  let component = (
+    <CellGroup data={config} />
+  )
+
+  return component
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+
+#### 新注册表单的完整表单用法  
+
+```js
+function App(){
+  // 在复合表单中使用  
+  let config = {
+    formClass: 'new-form-class',
+    data: [
+      { 
+        title: '复合表单的标题',
+        input: [
+          {type: 'test', value: '测试数据'}
+        ]
+      }
+    ]
+  }
+
+  let component = cell(config)
+
+  return <component.UI />
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
+```

@@ -82,8 +82,11 @@ function cell(options){
 
 // 内部默认表单组件 input text
 function TextInput(props){
+  let $props = {...props}
+  $props.store = null
+  $props.registeroptions = null
   return (
-    <input {...props}/>
+    <input {...$props}/>
   )
 }
 

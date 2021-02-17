@@ -84,14 +84,14 @@ function useMyAttachment(itemConfig) {
       n = n.map(function (k) {
         return _util.lib.camelCase(k);
       });
-      funKeys[ky] = n;
-      v = properties; // setValue setClass setReadonly
+      funKeys[ky] = n; // v = properties
+      // setValue setClass setReadonly
 
       inputPropBehavior[n[0]] = function (param, cb) {
         v[ky] = ky === 'show' ? param === undefined ? true : param : param;
-        if (timmer) clearTimeout(timmer);
+        if (timmer) clearTimeout(timmer); // v = properties
+
         timmer = setTimeout(function () {
-          v = properties;
           setV(_objectSpread({}, v), cb);
           timmer = null;
         }, 17);
@@ -160,6 +160,8 @@ function useMyAttachment(itemConfig) {
   }
 
   var myshow = inputPropBehavior.getShow();
+  var myItemClass = inputPropBehavior.getItemClass();
+  var myItemStyle = inputPropBehavior.getItemStyle();
   var mytitle = createAttachment(inputPropBehavior.getTitle(), dftcls[0], attributes);
   var mydesc = createAttachment(inputPropBehavior.getDesc(), dftcls[1], attributes);
   var myerror = createAttachment(inputPropBehavior.getError(), dftcls[2] + ' ' + errorType, attributes);
@@ -169,8 +171,10 @@ function useMyAttachment(itemConfig) {
   return {
     funKeys: funKeys,
     context: context,
-    myItemClass: properties.itemClass,
-    myItemStyle: properties.itemStyle,
+    // myItemClass: properties.itemClass,
+    // myItemStyle: properties.itemStyle,
+    myItemClass: myItemClass,
+    myItemStyle: myItemStyle,
     myrequired: myrequired,
     mytitle: mytitle,
     mydesc: mydesc,
