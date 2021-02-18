@@ -2,6 +2,14 @@
 # yarn lockfile v1
 
 
+"@aotoo/aotoo@^6.1.39":
+  version "6.1.39"
+  resolved "https://registry.yarnpkg.com/@aotoo/aotoo/-/aotoo-6.1.39.tgz#e5b1cb45ad3a0f18e169b33bda0ef4dd116d69ec"
+  integrity sha512-k8x2l+11Tmg3mUUkKDFKG8EsQwQ1s759B5CK0fwveHhNkunfhmR2I6hS3UKWl+VzDXxFFMqBIAb1j3MpC/CT7A==
+  dependencies:
+    lodash "^4.17.4"
+    md5 "^2.3.0"
+
 "@babel/cli@^7.11.6":
   version "7.11.6"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.11.6.tgz#1fcbe61c2a6900c3539c06ee58901141f3558482"

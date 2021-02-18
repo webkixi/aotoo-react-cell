@@ -52,5 +52,8 @@
   ],
   "author": "天天修改",
   "license": "MIT",
-  "homepage": "http://www.agzgz.com"
+  "homepage": "http://www.agzgz.com",
+  "dependencies": {
+    "@aotoo/aotoo": "^6.1.39"
+  }
 }
