@@ -108,7 +108,7 @@ function supplementEvents(inputConfig, mycontext, parent) {
             return [oldfn, function (evt) {
               newfn.call(mycontext, evt, param, mycontext);
               emitUnionResponse(unionResponse, evtkey, mycontext, parent, e);
-            }];
+            }, parent];
           }
 
           e.persist();

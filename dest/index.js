@@ -10,6 +10,12 @@ Object.defineProperty(exports, "useState", {
     return _util.useState;
   }
 });
+Object.defineProperty(exports, "lib", {
+  enumerable: true,
+  get: function get() {
+    return _util.lib;
+  }
+});
 Object.defineProperty(exports, "createStore", {
   enumerable: true,
   get: function get() {

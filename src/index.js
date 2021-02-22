@@ -96,7 +96,8 @@ export {
   createStore,
   CellGroup,
   CellBlock,
-  useState
+  useState,
+  lib
 }
 
 export default cell
