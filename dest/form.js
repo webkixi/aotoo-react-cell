@@ -93,7 +93,7 @@ function dynamicUnion(ipt, parent) {
 
 function FormBlock(props) {
   var myElements = [];
-  var parent = props.parent || props.store || {};
+  var parent = props.parent || props.store || (0, _util.createStore)();
 
   var _useState = (0, _util.useState)(function () {
     return props.from ? props.data : function () {
@@ -127,6 +127,7 @@ function FormBlock(props) {
       mytitle = _useMyAttachment.mytitle,
       mydesc = _useMyAttachment.mydesc,
       myerror = _useMyAttachment.myerror,
+      mytip = _useMyAttachment.mytip,
       myshow = _useMyAttachment.myshow,
       errorType = _useMyAttachment.errorType,
       context = _useMyAttachment.context,
@@ -251,7 +252,7 @@ function FormBlock(props) {
         if (index > -1) {
           var inputItemConfig = (0, _dataparser.inputParser)(pay);
           dynamicUnion(inputItemConfig, parent);
-          inputElements.splice(1, 0, inputItemConfig);
+          inputElements.splice(index, 0, inputItemConfig);
           managerInputElements(_toConsumableArray(inputElements), callback);
         }
       }
@@ -299,7 +300,9 @@ function FormBlock(props) {
   return myshow ? /*#__PURE__*/React.createElement("div", {
     className: "group-line ".concat(myItemClass || ''),
     style: myItemStyle
-  }, myrequired && myrequired.UI ? /*#__PURE__*/React.createElement(myrequired.UI, null) : myrequired, mytitle && mytitle.UI ? /*#__PURE__*/React.createElement(mytitle.UI, null) : mytitle, body, myerror && myerror.UI ? /*#__PURE__*/React.createElement(myerror.UI, null) : myerror
+  }, myrequired && myrequired.UI ? /*#__PURE__*/React.createElement(myrequired.UI, null) : myrequired, mytitle && mytitle.UI ? /*#__PURE__*/React.createElement(mytitle.UI, null) : mytitle, body, mytip && mytip.UI ? /*#__PURE__*/React.createElement(mytip.UI, null) : mytip
+  /* tip */
+  , myerror && myerror.UI ? /*#__PURE__*/React.createElement(myerror.UI, null) : myerror
   /* success , warning, error info */
   , mydesc && mydesc.UI ? /*#__PURE__*/React.createElement(mydesc.UI, null) : mydesc) : null;
 }
@@ -380,7 +383,7 @@ function FormGroup(props) {
       var index = this.findIndex(indexer);
 
       if (index > -1 && _util.lib.isPlainObject(pay)) {
-        $data = $data.splice(index, 0, pay);
+        $data.splice(index, 0, pay);
         setData(_toConsumableArray($data), cb);
       }
     },

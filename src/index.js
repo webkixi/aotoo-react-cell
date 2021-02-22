@@ -95,7 +95,8 @@ register('Text', ['text', 'number', 'telephone', 'password'], TextInput)
 export {
   createStore,
   CellGroup,
-  CellBlock
+  CellBlock,
+  useState
 }
 
 export default cell

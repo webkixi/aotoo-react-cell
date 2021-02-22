@@ -4,6 +4,12 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.register = register;
+Object.defineProperty(exports, "useState", {
+  enumerable: true,
+  get: function get() {
+    return _util.useState;
+  }
+});
 Object.defineProperty(exports, "createStore", {
   enumerable: true,
   get: function get() {

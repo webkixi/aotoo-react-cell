@@ -38,7 +38,7 @@ export function InputBody(props){
 
   let [attr, setAttribute] = useState(()=>(inputConfig.attributes||{}))
   let [ inputContext, attributesContext, attributesFunKeys ] = createAttrState(inputConfig.id, attr, setAttribute)
-  let { myrequired, myItemClass, myItemStyle, mytitle, mydesc, myerror, myshow, errorType, context, funKeys } = useMyAttachment(inputConfig)
+  let { myrequired, myItemClass, myItemStyle, mytitle, mydesc, myerror, mytip, myshow, errorType, context, funKeys } = useMyAttachment(inputConfig)
   inputConfig.attributes = attr
   
 
@@ -97,6 +97,7 @@ export function InputBody(props){
       {(mytitle && mytitle.UI) ? <mytitle.UI /> : mytitle}
       <div className="item-entity">
         {InputEntity}
+        {(mytip && mytip.UI) ? <mytip.UI /> : mytip  /* 提示 */ } 
         {(myerror && myerror.UI) ? <myerror.UI /> : myerror  /* success , warning, error info */ } 
       </div>
       {(mydesc && mydesc.UI) ? <mydesc.UI /> : mydesc}

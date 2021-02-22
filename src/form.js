@@ -41,7 +41,7 @@ function dynamicUnion(ipt, parent){  // 动态数据添加的联动回调方法
 
 export function FormBlock(props){
   let myElements = []
-  let parent = props.parent || props.store || {}
+  let parent = props.parent || props.store || createStore()
   let [item, setItem] = useState(()=>props.from ? props.data : (()=>formParser([props.data], parent)[0])())
   let groupId = item.groupId
   let tmpConfig = { attributes: {}, properties: item }
@@ -51,7 +51,7 @@ export function FormBlock(props){
   }, [props.data])
   
   let [inputElements, managerInputElements] = useState(tmpConfig.properties.input)
-  let { myrequired, myItemClass, myItemStyle, mytitle, mydesc, myerror, myshow, errorType, context, funKeys } = useMyAttachment(tmpConfig, 'line')
+  let { myrequired, myItemClass, myItemStyle, mytitle, mydesc, myerror, mytip,  myshow, errorType, context, funKeys } = useMyAttachment(tmpConfig, 'line')
   let allFunkeys = Object.assign({}, funKeys)
 
   let formLineContext = {
@@ -155,7 +155,7 @@ export function FormBlock(props){
         if (index > -1) {
           let inputItemConfig = inputParser(pay)
           dynamicUnion(inputItemConfig, parent)
-          inputElements.splice(1, 0, inputItemConfig)
+          inputElements.splice(index, 0, inputItemConfig)
           managerInputElements([...inputElements], callback)
         }
       }
@@ -202,6 +202,7 @@ export function FormBlock(props){
       {(myrequired && myrequired.UI) ? <myrequired.UI /> : myrequired}
       {(mytitle && mytitle.UI) ? <mytitle.UI /> : mytitle}
       {body}
+      {(mytip && mytip.UI) ? <mytip.UI /> : mytip  /* tip */ }
       {(myerror && myerror.UI) ? <myerror.UI /> : myerror  /* success , warning, error info */ }
       {(mydesc && mydesc.UI) ? <mydesc.UI /> : mydesc}
     </div>
@@ -273,7 +274,7 @@ export function FormGroup(props) {
     splice(indexer, pay, cb){
       let index = this.findIndex(indexer)
       if (index > -1 && lib.isPlainObject(pay)) {
-        $data = $data.splice(index, 0, pay)
+        $data.splice(index, 0, pay)
         setData([...$data], cb)
       }
     },

@@ -50,7 +50,7 @@ function createAttachment(content, cls) {
   }
 }
 
-var inputPropKey = ['title', 'desc', 'error', 'show', 'itemClass', 'itemStyle']; // let errorType = false
+var inputPropKey = ['title', 'desc', 'error', 'show', 'itemClass', 'itemStyle', 'tip']; // let errorType = false
 // function setErrorType(val){
 //   errorType = val
 // }
@@ -116,30 +116,33 @@ function useMyAttachment(itemConfig) {
     setDesc: function setDesc(param, cb) {
       inputPropBehavior.setDesc(param, cb);
     },
+    setTip: function setTip(param, cb) {
+      inputPropBehavior.setTip(param, cb);
+    },
     error: function error(param) {
       if (param) {
-        inputPropBehavior.setError(param || properties.error);
         setErrorType('error');
+        inputPropBehavior.setError(param || properties.error);
       } else {
         this.removeError();
       }
     },
     removeError: function removeError() {
-      inputPropBehavior.setError(properties.error);
       setErrorType('');
+      inputPropBehavior.setError(properties.error);
     },
     warn: function warn(param) {
       if (param) {
-        inputPropBehavior.setError(param);
         setErrorType('warn');
+        inputPropBehavior.setError(param);
       } else {
         this.removeError();
       }
     },
     info: function info(param) {
       if (param) {
-        inputPropBehavior.setError(param);
         setErrorType('info');
+        inputPropBehavior.setError(param);
       } else {
         this.removeError();
       }
@@ -151,7 +154,7 @@ function useMyAttachment(itemConfig) {
       inputPropBehavior.setShow(false, cb);
     }
   };
-  var dftcls = ['title', 'desc', 'error', 'required'];
+  var dftcls = ['title', 'desc', 'error', 'required', 'tip'];
 
   if (prefix) {
     dftcls = dftcls.map(function (item) {
@@ -164,6 +167,7 @@ function useMyAttachment(itemConfig) {
   var myItemStyle = inputPropBehavior.getItemStyle();
   var mytitle = createAttachment(inputPropBehavior.getTitle(), dftcls[0], attributes);
   var mydesc = createAttachment(inputPropBehavior.getDesc(), dftcls[1], attributes);
+  var mytip = createAttachment(inputPropBehavior.getTip(), dftcls[4], attributes);
   var myerror = createAttachment(inputPropBehavior.getError(), dftcls[2] + ' ' + errorType, attributes);
   myrequired = myrequired ? myrequired === true ? /*#__PURE__*/React.createElement("div", {
     className: dftcls[3]
@@ -178,6 +182,7 @@ function useMyAttachment(itemConfig) {
     myrequired: myrequired,
     mytitle: mytitle,
     mydesc: mydesc,
+    mytip: mytip,
     myerror: myerror,
     myshow: myshow,
     errorType: errorType

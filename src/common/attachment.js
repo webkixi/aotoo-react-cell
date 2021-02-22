@@ -21,7 +21,7 @@ export function createAttachment(content, cls, attrs={}){
   }
 }
 
-export let inputPropKey = ['title', 'desc', 'error', 'show', 'itemClass', 'itemStyle']
+export let inputPropKey = ['title', 'desc', 'error', 'show', 'itemClass', 'itemStyle', 'tip']
 // let errorType = false
 // function setErrorType(val){
 //   errorType = val
@@ -83,30 +83,33 @@ export function useMyAttachment(itemConfig, prefix='item') {
     setDesc(param, cb){
       inputPropBehavior.setDesc(param, cb)
     },
+    setTip(param, cb){
+      inputPropBehavior.setTip(param, cb)
+    },
     error(param){
       if (param) {
-        inputPropBehavior.setError(param||properties.error)
         setErrorType('error')
+        inputPropBehavior.setError(param||properties.error)
       } else {
         this.removeError()
       }
     },
     removeError(){
-      inputPropBehavior.setError(properties.error)
       setErrorType('')
+      inputPropBehavior.setError(properties.error)
     },
     warn(param){
       if (param) {
-        inputPropBehavior.setError(param)
         setErrorType('warn')
+        inputPropBehavior.setError(param)
       } else {
         this.removeError()
       }
     },
     info(param){
       if (param) {
-        inputPropBehavior.setError(param)
         setErrorType('info')
+        inputPropBehavior.setError(param)
       } else {
         this.removeError()
       }
@@ -119,7 +122,7 @@ export function useMyAttachment(itemConfig, prefix='item') {
     }
   }
 
-  let dftcls = ['title', 'desc', 'error', 'required']
+  let dftcls = ['title', 'desc', 'error', 'required', 'tip']
   if (prefix) {
     dftcls = dftcls.map(item => (prefix + '-' + item))
   }
@@ -129,6 +132,7 @@ export function useMyAttachment(itemConfig, prefix='item') {
   let myItemStyle = inputPropBehavior.getItemStyle()
   let mytitle = createAttachment(inputPropBehavior.getTitle(), dftcls[0], attributes)
   let mydesc = createAttachment(inputPropBehavior.getDesc(), dftcls[1], attributes)
+  let mytip = createAttachment(inputPropBehavior.getTip(), dftcls[4], attributes)
   let myerror = createAttachment(inputPropBehavior.getError(), dftcls[2] + ' ' + errorType , attributes)
   myrequired = myrequired ? myrequired === true ? <div className={dftcls[3]} /> : createAttachment(myrequired, dftcls[3], attributes) : false
 
@@ -143,6 +147,7 @@ export function useMyAttachment(itemConfig, prefix='item') {
     myrequired,
     mytitle,
     mydesc,
+    mytip,
     myerror,
     myshow,
     errorType

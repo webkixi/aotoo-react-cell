@@ -70,6 +70,7 @@ function InputBody(props) {
       mytitle = _useMyAttachment.mytitle,
       mydesc = _useMyAttachment.mydesc,
       myerror = _useMyAttachment.myerror,
+      mytip = _useMyAttachment.mytip,
       myshow = _useMyAttachment.myshow,
       errorType = _useMyAttachment.errorType,
       context = _useMyAttachment.context,
@@ -125,7 +126,9 @@ function InputBody(props) {
     style: myItemStyle
   }, myrequired && myrequired.UI ? /*#__PURE__*/React.createElement(myrequired.UI, null) : myrequired, mytitle && mytitle.UI ? /*#__PURE__*/React.createElement(mytitle.UI, null) : mytitle, /*#__PURE__*/React.createElement("div", {
     className: "item-entity"
-  }, InputEntity, myerror && myerror.UI ? /*#__PURE__*/React.createElement(myerror.UI, null) : myerror
+  }, InputEntity, mytip && mytip.UI ? /*#__PURE__*/React.createElement(mytip.UI, null) : mytip
+  /* 提示 */
+  , myerror && myerror.UI ? /*#__PURE__*/React.createElement(myerror.UI, null) : myerror
   /* success , warning, error info */
   ), mydesc && mydesc.UI ? /*#__PURE__*/React.createElement(mydesc.UI, null) : mydesc) : null;
 }
