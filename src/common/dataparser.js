@@ -27,7 +27,7 @@ export function inputParser(ipt, gid, parent) {
     let type = ipt.type || 'text'
     let union = ipt.union
     let uniqId = ipt.uniqId || lib.uniqueId('input-element-')
-    let key = id ? id : uniqId;
+    let key = 'input-key-' + id ? id : uniqId;
     properties.show = ipt.hasOwnProperty('show') ? show : true
     properties.key = key
     ipt.value = ipt.value || ''
@@ -80,7 +80,7 @@ export function formParser(data=[], parent){
   data.forEach(item=>{  // item 为 group-line 数据
     let $item = {...item}
     $item.groupId = $item.gid || $item.groupId || lib.uniqueId('line-of-form-')  // 用于快速定位data中的那一组表单
-    $item.key = $item.id || $item.groupId
+    $item.key = 'gkey-' + ($item.id || $item.groupId)
     $item.show = $item.hasOwnProperty('show') ? $item.show : true
     let inputs = $item.input || $item.cells
     if (inputs) {

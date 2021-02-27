@@ -65,7 +65,7 @@ function inputParser(ipt, gid, parent) {
 
     var uniqId = ipt.uniqId || _util.lib.uniqueId('input-element-');
 
-    var key = id ? id : uniqId;
+    var key = 'input-key-' + id ? id : uniqId;
     properties.show = ipt.hasOwnProperty('show') ? show : true;
     properties.key = key;
     ipt.value = ipt.value || '';
@@ -132,7 +132,7 @@ function formParser() {
 
     $item.groupId = $item.gid || $item.groupId || _util.lib.uniqueId('line-of-form-'); // 用于快速定位data中的那一组表单
 
-    $item.key = $item.id || $item.groupId;
+    $item.key = 'gkey-' + ($item.id || $item.groupId);
     $item.show = $item.hasOwnProperty('show') ? $item.show : true;
     var inputs = $item.input || $item.cells;
 

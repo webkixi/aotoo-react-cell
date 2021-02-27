@@ -100,14 +100,20 @@ function InputBody(props) {
   };
 
   mycontext.save = function (e, cb) {
-    var readOnly = e.target.readOnly;
-    var disabled = e.target.disabled;
+    if (e) {
+      if (e.target) {
+        var readOnly = e.target.readOnly;
+        var disabled = e.target.disabled;
 
-    if (readOnly || disabled) {
-      return;
+        if (readOnly || disabled) {
+          return;
+        }
+
+        mycontext.setValue(e.target.value, cb);
+      } else {
+        mycontext.setValue(e, cb);
+      }
     }
-
-    mycontext.setValue(e.target.value, cb);
   };
 
   var attributes = (0, _events.supplementEvents)(inputConfig, mycontext, parent);

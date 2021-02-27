@@ -68,12 +68,18 @@ export function InputBody(props){
     }
   }
   mycontext.save = function(e, cb){
-    let readOnly = e.target.readOnly
-    let disabled = e.target.disabled
-    if (readOnly || disabled) {
-      return
+    if (e) {
+      if (e.target) {
+        let readOnly = e.target.readOnly
+        let disabled = e.target.disabled
+        if (readOnly || disabled) {
+          return
+        }
+        mycontext.setValue(e.target.value, cb)
+      } else {
+        mycontext.setValue(e, cb)
+      }
     }
-    mycontext.setValue(e.target.value, cb)
   } 
   
   let attributes = supplementEvents(inputConfig, mycontext, parent)
