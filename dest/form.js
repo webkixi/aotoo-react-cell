@@ -109,11 +109,6 @@ function FormBlock(props) {
     attributes: {},
     properties: item
   };
-  React.useEffect(function () {
-    setItem(props.from ? props.data : function () {
-      return (0, _dataparser.formParser)([props.data], parent)[0];
-    }());
-  }, [props.data]);
 
   var _useState3 = (0, _util.useState)(tmpConfig.properties.input),
       _useState4 = _slicedToArray(_useState3, 2),

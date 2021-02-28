@@ -46,10 +46,6 @@ export function FormBlock(props){
   let groupId = item.groupId
   let tmpConfig = { attributes: {}, properties: item }
   
-  React.useEffect(()=>{
-    setItem(props.from ? props.data : (()=>formParser([props.data], parent)[0])())
-  }, [props.data])
-  
   let [inputElements, managerInputElements] = useState(tmpConfig.properties.input)
   let { myrequired, myItemClass, myItemStyle, mytitle, mydesc, myerror, mytip,  myshow, errorType, context, funKeys } = useMyAttachment(tmpConfig, 'line')
   let allFunkeys = Object.assign({}, funKeys)

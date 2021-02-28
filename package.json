@@ -1,6 +1,6 @@
 {
   "name": "@aotoo/react-cell",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "aotoo is a react library, for simpler development of react components, it is like a lightweight redux that but more better, you can use aotoo in",
   "scripts": {
     "build": "babel src -d dest",
