@@ -147,5 +147,7 @@ function TextInput(props) {
 }
 
 register('Text', ['text', 'number', 'telephone', 'password'], TextInput);
+cell.Group = _form.CellGroup;
+cell.Block = _form.CellBlock;
 var _default = cell;
 exports.default = _default;

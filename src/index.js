@@ -100,4 +100,6 @@ export {
   lib
 }
 
+cell.Group = CellGroup
+cell.Block = CellBlock
 export default cell

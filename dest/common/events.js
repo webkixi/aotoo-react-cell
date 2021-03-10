@@ -26,8 +26,9 @@ function emitUnionResponse(response, evtkey, ctx, parent, evt) {
         linkfun = _linkitem[1],
         srcId = _linkitem[2];
 
-    var sourceBehaviorContext = parent.ctx.elements[srcId];
-    var value = ctx.getValue();
+    var sourceBehaviorContext = parent.ctx.elements[srcId]; // let value = ctx.getValue()
+
+    var value = evt.target.value;
 
     if (ekey) {
       if (ekey === evtkey) linkfun.call(sourceBehaviorContext, {
@@ -103,12 +104,14 @@ function supplementEvents(inputConfig, mycontext, parent) {
       var funEntity = function funEntity(fn, param) {
         return function (e) {
           if (_util.lib.isFunction(e)) {
-            var oldfn = fn;
+            var funFromClient = fn;
             var newfn = e;
-            return [oldfn, function (evt) {
+            return [funFromClient, function (evt) {
               newfn.call(mycontext, evt, param, mycontext);
-              emitUnionResponse(unionResponse, evtkey, mycontext, parent, e);
-            }, parent];
+              emitUnionResponse(unionResponse, evtkey, mycontext, parent, evt);
+            }, parent, function (evt) {
+              emitUnionResponse(unionResponse, evtkey, mycontext, parent, evt);
+            }];
           }
 
           e.persist();

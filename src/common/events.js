@@ -8,7 +8,8 @@ function emitUnionResponse(response, evtkey, ctx, parent, evt) {
   response.forEach(linkitem=>{
     let [ekey, linkfun, srcId] = linkitem
     let sourceBehaviorContext = parent.ctx.elements[srcId]
-    let value = ctx.getValue()
+    // let value = ctx.getValue()
+    let value = evt.target.value
     if (ekey) {
       if (ekey === evtkey) linkfun.call(sourceBehaviorContext, {value}, ctx)
     } else {
@@ -73,15 +74,18 @@ export function supplementEvents(inputConfig, mycontext, parent){
       let funEntity = function(fn, param) {
         return function(e){
           if (lib.isFunction(e)) {
-            let oldfn = fn
+            let funFromClient = fn
             let newfn = e
             return [
-              oldfn,
+              funFromClient,
               function(evt){
                 newfn.call(mycontext, evt, param, mycontext)
-                emitUnionResponse(unionResponse, evtkey, mycontext, parent, e)
+                emitUnionResponse(unionResponse, evtkey, mycontext, parent, evt)
               },
-              parent
+              parent,
+              function(evt){
+                emitUnionResponse(unionResponse, evtkey, mycontext, parent, evt)
+              }
             ]
           }
           e.persist()
