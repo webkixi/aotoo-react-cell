@@ -53,19 +53,19 @@ function inputParser(ipt, gid, parent) {
     var attributes = {};
     var events = {};
 
-    if (!ipt.id && !ipt.name) {
-      console.warn('注意，不指定id和name属性，会存在一定的性能问题');
-    }
-
-    var id = ipt.id || ipt.name || _util.lib.uniqueId('input-id-');
+    var id = ipt.id || ipt.name || function () {
+      console.warn('请正确指定表单元素的id，可能会引起一些问题');
+      return _util.lib.uniqueId('input-id-');
+    }();
 
     var name = ipt.name;
     var type = ipt.type || 'text';
     var union = ipt.union;
 
-    var uniqId = ipt.uniqId || _util.lib.uniqueId('input-element-');
+    var uniqId = ipt.uniqId || _util.lib.uniqueId('input-element-'); // let key = 'input-key-' + id ? id : uniqId;
 
-    var key = 'input-key-' + id ? id : uniqId;
+
+    var key = 'input-key-' + id;
     properties.show = ipt.hasOwnProperty('show') ? show : true;
     properties.key = key;
     ipt.value = ipt.value || '';
@@ -131,6 +131,8 @@ function formParser() {
     var $item = _objectSpread({}, item);
 
     $item.groupId = $item.gid || $item.groupId || _util.lib.uniqueId('line-of-form-'); // 用于快速定位data中的那一组表单
+
+    item.gid = $item.groupId; // 将gid反射回原始数据
 
     $item.key = 'gkey-' + ($item.id || $item.groupId);
     $item.show = $item.hasOwnProperty('show') ? $item.show : true;

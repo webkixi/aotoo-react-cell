@@ -19,15 +19,16 @@ export function inputParser(ipt, gid, parent) {
     }
     let attributes = {}
     let events = {}
-    if (!ipt.id && !ipt.name) {
-      console.warn('注意，不指定id和name属性，会存在一定的性能问题');
-    }
-    let id = ipt.id || ipt.name || lib.uniqueId('input-id-')
+    let id = ipt.id || ipt.name || (()=>{
+      console.warn('请正确指定表单元素的id，可能会引起一些问题');
+      return lib.uniqueId('input-id-')
+    })()
     let name = ipt.name
     let type = ipt.type || 'text'
     let union = ipt.union
     let uniqId = ipt.uniqId || lib.uniqueId('input-element-')
-    let key = 'input-key-' + id ? id : uniqId;
+    // let key = 'input-key-' + id ? id : uniqId;
+    let key = 'input-key-' + id;
     properties.show = ipt.hasOwnProperty('show') ? show : true
     properties.key = key
     ipt.value = ipt.value || ''
@@ -80,6 +81,8 @@ export function formParser(data=[], parent){
   data.forEach(item=>{  // item 为 group-line 数据
     let $item = {...item}
     $item.groupId = $item.gid || $item.groupId || lib.uniqueId('line-of-form-')  // 用于快速定位data中的那一组表单
+    item.gid = $item.groupId // 将gid反射回原始数据
+
     $item.key = 'gkey-' + ($item.id || $item.groupId)
     $item.show = $item.hasOwnProperty('show') ? $item.show : true
     let inputs = $item.input || $item.cells
