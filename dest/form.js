@@ -94,6 +94,7 @@ function dynamicUnion(ipt, parent) {
 function FormBlock(props) {
   var myElements = [];
   var parent = props.parent || props.store || (0, _util.createStore)();
+  parent.remount && parent.remount();
 
   var _useState = (0, _util.useState)(function () {
     return props.from ? props.data : function () {
@@ -304,9 +305,10 @@ function FormBlock(props) {
 
 function FormGroup(props) {
   var data = props.data;
-  var parent = props.context || props.parent || props.store || (0, _util.createStore)();
   var state = props.state;
   var elementsJSX = [];
+  var parent = props.context || props.parent || props.store || (0, _util.createStore)();
+  parent.remount && parent.remount();
 
   var _useState5 = (0, _util.useState)(data),
       _useState6 = _slicedToArray(_useState5, 2),

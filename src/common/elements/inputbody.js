@@ -10,7 +10,7 @@ import { supplementEvents } from "../events";
 import { useState, createStore } from '../util'
 
 export function InputBody(props){
-  let parent = props.parent || props.store || createStore()
+  let parent = props.parent || props.store || createStore(); parent.remount&&parent.remount();
   let InputEntity = props.entity  // 注册组件
   
 

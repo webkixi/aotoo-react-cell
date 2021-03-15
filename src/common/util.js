@@ -18,12 +18,16 @@ export function useState (od) {
   }];
 }
 
+let privateStore = {}
 export const createStore = function createFormStore(){
-  return {
+  const store = {
+    uniqueId: (new Date().getTime()),
+    
     ctx: {
       elements: {},
       group: {},
     },
+    
     getById(id){
       try {
         const cell = this.ctx.elements[id] || this.ctx.group[id]
@@ -33,8 +37,18 @@ export const createStore = function createFormStore(){
         console.warn(error)
       }
     },
+
     _dynamicUnion: {},
+
+    // cell被深度clone时，由cell内部重新绑定
+    remount(){
+      privateStore[this['uniqueId']].ctx = this.ctx
+      privateStore[this['uniqueId']].getById = this.getById
+      privateStore[this['uniqueId']]._dynamicUnion = this._dynamicUnion
+    }
   }
+  privateStore[store['uniqueId']] = store
+  return store
 }
 
 

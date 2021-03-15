@@ -87,8 +87,7 @@ function inputParser(ipt, gid, parent) {
       name: name,
       // input name
       type: type,
-      uniqId: uniqId,
-      // input 唯一id
+      // uniqId, // input 唯一id
       events: events,
       properties: properties,
       // input 的外围属性

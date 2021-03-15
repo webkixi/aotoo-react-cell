@@ -49,7 +49,7 @@ export function inputParser(ipt, gid, parent) {
       groupId: gid,
       name, // input name
       type,
-      uniqId, // input 唯一id
+      // uniqId, // input 唯一id
       events,
       properties, // input 的外围属性
       attributes, // input 内置属性

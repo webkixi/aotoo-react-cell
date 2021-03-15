@@ -41,7 +41,7 @@ function dynamicUnion(ipt, parent){  // 动态数据添加的联动回调方法
 
 export function FormBlock(props){
   let myElements = []
-  let parent = props.parent || props.store || createStore()
+  let parent = props.parent || props.store || createStore(); parent.remount&&parent.remount()
   let [item, setItem] = useState(()=>props.from ? props.data : (()=>formParser([props.data], parent)[0])())
   let groupId = item.groupId
   let tmpConfig = { attributes: {}, properties: item }
@@ -207,9 +207,10 @@ export function FormBlock(props){
 
 export function FormGroup(props) {
   let data = props.data
-  let parent = props.context||props.parent||props.store||createStore()
   let state = props.state
   let elementsJSX = []
+  let parent = props.context||props.parent||props.store||createStore()
+  parent.remount&&parent.remount()
   
   let [oridata, setOriData] = useState(data)
   let [$data, setData] = useState(oridata)

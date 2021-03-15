@@ -29,6 +29,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function InputBody(props) {
   var parent = props.parent || props.store || (0, _util.createStore)();
+  parent.remount && parent.remount();
   var InputEntity = props.entity; // 注册组件
 
   var _useState = (0, _util.useState)(function () {
