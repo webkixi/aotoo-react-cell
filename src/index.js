@@ -39,12 +39,15 @@ function template(state, props, $ref){
 }
 
 function cell(options){
+  let cellStore = createStore()
+  delete cellStore.remount
   let formConfig = {
-    ctx: {
-      elements: {},
-      group: {},
-    },
-    _dynamicUnion: {},
+    ...cellStore,
+    // ctx: {
+    //   elements: {},
+    //   group: {},
+    // },
+    // _dynamicUnion: {},
     data: {},
     created(){
       let $data = this.getData()

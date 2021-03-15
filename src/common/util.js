@@ -19,9 +19,10 @@ export function useState (od) {
 }
 
 let privateStore = {}
+let valueStack = []
 export const createStore = function createFormStore(){
   const store = {
-    uniqueId: (new Date().getTime()),
+    _storeUniqueId: (new Date().getTime()),
     
     ctx: {
       elements: {},
@@ -42,12 +43,46 @@ export const createStore = function createFormStore(){
 
     // cell被深度clone时，由cell内部重新绑定
     remount(){
-      privateStore[this['uniqueId']].ctx = this.ctx
-      privateStore[this['uniqueId']].getById = this.getById
-      privateStore[this['uniqueId']]._dynamicUnion = this._dynamicUnion
+      privateStore[this['_storeUniqueId']].ctx = this.ctx
+      privateStore[this['_storeUniqueId']]._dynamicUnion = this._dynamicUnion
+    },
+
+    storeHelper: {
+      value: (id, val)=>{
+        let result = {}
+        Object.keys(store.ctx.elements).forEach(inputId=>{
+          const input = store.getById(inputId)
+          result[inputId] = input.attr('value')
+        })
+        if (!id && !val) {
+          return result
+        }
+        if (id && !val) {
+          return result[id]
+        }
+        if (id && val) {
+          const input = store.getById(id)
+          input.attr('value', val)
+        }
+      },
+
+      save: ()=>{
+        const allValue = store.storeHelper.value()
+        valueStack.push(allValue)
+      },
+
+      restore: ()=>{
+        const lastAllValue = valueStack.pop()
+        if (lastAllValue) {
+          Object.keys(lastAllValue).forEach(inputId=>{
+            const input = store.getById(inputId)
+            input.attr('value', lastAllValue[inputId])
+          })
+        }
+      }
     }
   }
-  privateStore[store['uniqueId']] = store
+  privateStore[store['_storeUniqueId']] = store
   return store
 }
 

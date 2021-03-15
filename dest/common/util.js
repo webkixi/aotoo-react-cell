@@ -50,10 +50,11 @@ function useState(od) {
 }
 
 var privateStore = {};
+var valueStack = [];
 
 var createStore = function createFormStore() {
   var store = {
-    uniqueId: new Date().getTime(),
+    _storeUniqueId: new Date().getTime(),
     ctx: {
       elements: {},
       group: {}
@@ -70,12 +71,47 @@ var createStore = function createFormStore() {
     _dynamicUnion: {},
     // cell被深度clone时，由cell内部重新绑定
     remount: function remount() {
-      privateStore[this['uniqueId']].ctx = this.ctx;
-      privateStore[this['uniqueId']].getById = this.getById;
-      privateStore[this['uniqueId']]._dynamicUnion = this._dynamicUnion;
+      privateStore[this['_storeUniqueId']].ctx = this.ctx;
+      privateStore[this['_storeUniqueId']]._dynamicUnion = this._dynamicUnion;
+    },
+    storeHelper: {
+      value: function value(id, val) {
+        var result = {};
+        Object.keys(store.ctx.elements).forEach(function (inputId) {
+          var input = store.getById(inputId);
+          result[inputId] = input.attr('value');
+        });
+
+        if (!id && !val) {
+          return result;
+        }
+
+        if (id && !val) {
+          return result[id];
+        }
+
+        if (id && val) {
+          var input = store.getById(id);
+          input.attr('value', val);
+        }
+      },
+      save: function save() {
+        var allValue = store.storeHelper.value();
+        valueStack.push(allValue);
+      },
+      restore: function restore() {
+        var lastAllValue = valueStack.pop();
+
+        if (lastAllValue) {
+          Object.keys(lastAllValue).forEach(function (inputId) {
+            var input = store.getById(inputId);
+            input.attr('value', lastAllValue[inputId]);
+          });
+        }
+      }
     }
   };
-  privateStore[store['uniqueId']] = store;
+  privateStore[store['_storeUniqueId']] = store;
   return store;
 };
 

@@ -107,12 +107,15 @@ function template(state, props, $ref) {
 }
 
 function cell(options) {
-  var formConfig = {
-    ctx: {
-      elements: {},
-      group: {}
-    },
-    _dynamicUnion: {},
+  var cellStore = (0, _util.createStore)();
+  delete cellStore.remount;
+
+  var formConfig = _objectSpread(_objectSpread({}, cellStore), {}, {
+    // ctx: {
+    //   elements: {},
+    //   group: {},
+    // },
+    // _dynamicUnion: {},
     data: {},
     created: function created() {
       var $data = this.getData();
@@ -122,7 +125,8 @@ function cell(options) {
     attached: function attached() {},
     ready: function ready() {},
     detached: function detached() {}
-  };
+  });
+
   var target = {
     data: []
   };
