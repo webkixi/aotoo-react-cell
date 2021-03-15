@@ -99,13 +99,22 @@ var createStore = function createFormStore() {
         var allValue = store.storeHelper.value();
         valueStack.push(allValue);
       },
-      restore: function restore() {
+      restore: function restore(id) {
+        if (id) id = [].concat(id);
         var lastAllValue = valueStack.pop();
 
         if (lastAllValue) {
           Object.keys(lastAllValue).forEach(function (inputId) {
-            var input = store.getById(inputId);
-            input.attr('value', lastAllValue[inputId]);
+            var restoreInputValue = true;
+
+            if (id) {
+              restoreInputValue = id.indexOf(inputId) > -1 ? true : false;
+            }
+
+            if (restoreInputValue) {
+              var input = store.getById(inputId);
+              input.attr('value', lastAllValue[inputId]);
+            }
           });
         }
       }

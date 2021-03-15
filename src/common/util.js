@@ -71,12 +71,19 @@ export const createStore = function createFormStore(){
         valueStack.push(allValue)
       },
 
-      restore: ()=>{
+      restore: (id)=>{
+        if (id) id = [].concat(id)
         const lastAllValue = valueStack.pop()
         if (lastAllValue) {
           Object.keys(lastAllValue).forEach(inputId=>{
-            const input = store.getById(inputId)
-            input.attr('value', lastAllValue[inputId])
+            let restoreInputValue = true
+            if (id) {
+              restoreInputValue = id.indexOf(inputId) > -1 ? true : false
+            }
+            if (restoreInputValue) {
+              const input = store.getById(inputId)
+              input.attr('value', lastAllValue[inputId])
+            }
           })
         }
       }
